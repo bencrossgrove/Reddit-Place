@@ -20,10 +20,9 @@ public class ClientServerThread extends Thread {
 
     public void run() {
 
-        try (
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-        ) {
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
             PlaceRequest<?> inputLine, outputLine;
             while ((inputLine = (PlaceRequest<?>) in.readObject()) != null) {
                 PlaceRequest.RequestType inputType = inputLine.getType();

@@ -2,15 +2,12 @@ package place.network;
 
 import place.PlaceBoard;
 import place.PlaceBoardObservable;
-import place.PlaceException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
 
 public class NetworkClient {
 
@@ -66,12 +63,20 @@ public class NetworkClient {
             networkOut.writeObject(loginRequest);
             // login request's response
             PlaceRequest<?> response = (PlaceRequest<?>) networkIn.readObject();
-            assert response.getType() == PlaceRequest.RequestType.LOGIN_SUCCESS :
-                    "Login was unsuccessful";
+            // check if login successful
+            if (response.getType() != PlaceRequest.RequestType.LOGIN_SUCCESS){
+                System.out.println(response.getData());
+                System.exit(1);
+            }
+            // print login success message
+            System.out.println(response.getData());
             // get the board from the server
             PlaceRequest<?> boardRes = (PlaceRequest<?>) networkIn.readObject();
-            assert boardRes.getType() == PlaceRequest.RequestType.BOARD :
-                    "Did not receive PlaceBoard";
+            // check if board was sent
+            if (boardRes.getType() != PlaceRequest.RequestType.BOARD){
+                System.err.println("BOARD NOT RECEIVED: Expected response BOARD got " + response.getType());
+                System.exit(1);
+            }
             // create instance of board
             PlaceBoard board = (PlaceBoard) boardRes.getData();
             this.model = new PlaceBoardObservable(board);
