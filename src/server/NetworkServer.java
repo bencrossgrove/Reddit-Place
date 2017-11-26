@@ -9,6 +9,12 @@ import java.io.ObjectOutputStream;
 import java.net.SocketException;
 import java.util.*;
 
+/**
+ * Handles TILE_CHANGED requests to be sent to all clients
+ * Singleton
+ * @author Ben Crossgrove
+ */
+
 public class NetworkServer {
 
     private static NetworkServer server;
@@ -39,17 +45,17 @@ public class NetworkServer {
     // send tile changed to all users output streams
     public void update(PlaceTile tile) throws IOException {
         List<String> toRemove = new ArrayList<>();
-        for (String user : users.keySet()){
+        for (String user : users.keySet()) {
             try {
                 ObjectOutputStream output = users.get(user);
                 PlaceExchange.tileChanged(output, tile);
-            } catch (SocketException se){
+            } catch (SocketException se) {
                 // add to list of sockets to be removed due to logoff from client
                 toRemove.add(user);
             }
         }
         // added to prevent ConcurrentModificationException, cannot remove from list during iteration!
-        for (String removeUser : toRemove){
+        for (String removeUser : toRemove) {
             remove(removeUser);
         }
     }

@@ -10,6 +10,12 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/**
+ * Network interface for client, handles both read and write actions
+ * Controller in MVC
+ * @author Ben Crossgrove
+ */
+
 public class NetworkClient {
 
     /**

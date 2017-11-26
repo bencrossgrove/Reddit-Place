@@ -11,6 +11,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Creates socket to accept clients as well as NetworkServer, handles LOGIN requests and creates initial board to be
+ * used, sends board to clients and spawns new ClientServerThread for each client.
+ * @author Ben Crossgrove
+ */
+
 public class PlaceServer {
 
     /**

@@ -9,6 +9,11 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Scanner;
 
+/**
+ * Plain Text UI version of Place
+ * @author Ben Crossgrove
+ */
+
 public class PlacePTUI extends ConsoleApplication implements Observer {
 
     private PlaceBoardObservable model;
@@ -40,7 +45,6 @@ public class PlacePTUI extends ConsoleApplication implements Observer {
     public synchronized void go(Scanner keyboardIn, PrintWriter consoleOut) {
         this.userIn = keyboardIn;
         this.userOut = consoleOut;
-
         // Connect UI to model. Can't do it sooner because streams not set up.
         this.model.addObserver(this);
         // Manually force a display of all board state, since it's too late
@@ -61,20 +65,20 @@ public class PlacePTUI extends ConsoleApplication implements Observer {
      * Where user input is accepted and sent as a new tile to the NetworkClient where the CHANGE_TILE request
      * is then sent to the server
      */
-    private void changeTile(){
+    private void changeTile() {
         boolean done = false;
         do {
             this.userOut.print("type move as: row column color ");
             this.userOut.flush();
             int row = this.userIn.nextInt();
             // exit condition -1, close streams and socket then exit by calling stop()
-            if (row == -1){
+            if (row == -1) {
                 this.stop();
                 break;
             }
             int col = this.userIn.nextInt();
             int colorCode = this.userIn.nextInt();
-            PlaceColor color = getColor(colorCode);
+            PlaceColor color = PlaceColorUtil.getColor(colorCode);
             PlaceTile selectedTile = new PlaceTile(row, col, username, color, System.currentTimeMillis());
             if (this.model.isValid(selectedTile)) {
                 this.userOut.println(selectedTile);
@@ -99,25 +103,13 @@ public class PlacePTUI extends ConsoleApplication implements Observer {
 
     /**
      * display the board after being notified of a changed tile
-     * @param o PlaceBoardObservable model
+     *
+     * @param o   PlaceBoardObservable model
      * @param arg tile that was changed
      */
     @Override
     public void update(Observable o, Object arg) {
         displayBoard();
-    }
-
-    /**
-     * retrieve the corresponding color from PlaceColor enum
-     * @param colorCode code of desired color
-     * @return the color
-     */
-    private PlaceColor getColor(int colorCode) {
-        for(PlaceColor color : PlaceColor.values())
-            if (color.getNumber() == colorCode) {
-                return color;
-            }
-        return PlaceColor.WHITE;
     }
 
     /**

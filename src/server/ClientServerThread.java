@@ -9,6 +9,11 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 
+/**
+ * Used to send all CHANGE_TILE requests from Client to Server
+ * @author Ben Crossgrove
+ */
+
 public class ClientServerThread extends Thread {
     private ObjectInputStream in;
     private String clientName;
