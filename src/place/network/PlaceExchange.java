@@ -1,5 +1,6 @@
 package place.network;
 
+import place.Logger;
 import place.PlaceBoard;
 import place.PlaceTile;
 
@@ -20,6 +21,7 @@ public class PlaceExchange {
      * @throws IOException when something goes wrong with the stream
      */
     public static void login(ObjectOutputStream out, String client) throws IOException {
+        Logger.debug("PlaceExchange login " + client);
         PlaceRequest<String> request = new PlaceRequest<>(PlaceRequest.RequestType.LOGIN, client);
         out.writeObject(request);
     }
@@ -27,11 +29,12 @@ public class PlaceExchange {
     /**
      * handle LOGIN_SUCCESS requests
      * @param out stream to send to server
-     * @param client user who is now logged in
+     * @param message message about user who is now logged in
      * @throws IOException when something goes wrong with the stream
      */
-    public static void loginSuccess(ObjectOutputStream out, String client) throws IOException {
-        PlaceRequest<String> request = new PlaceRequest<>(PlaceRequest.RequestType.LOGIN_SUCCESS, client);
+    public static void loginSuccess(ObjectOutputStream out, String message) throws IOException {
+        Logger.debug("PlaceExchange loginSuccess " + message);
+        PlaceRequest<String> request = new PlaceRequest<>(PlaceRequest.RequestType.LOGIN_SUCCESS, message);
         out.writeObject(request);
     }
 
@@ -42,6 +45,7 @@ public class PlaceExchange {
      * @throws IOException when something goes wrong with the stream
      */
     public static void board(ObjectOutputStream out, PlaceBoard board) throws IOException {
+        Logger.debug("PlaceExchange board");
         PlaceRequest<PlaceBoard> request = new PlaceRequest<PlaceBoard>(PlaceRequest.RequestType.BOARD, board);
         out.writeObject(request);
     }
@@ -53,6 +57,7 @@ public class PlaceExchange {
      * @throws IOException when something goes wrong with the stream
      */
     public static void changeTile(ObjectOutputStream out, PlaceTile tile) throws IOException {
+        Logger.debug("PlaceExchange changeTile " + tile);
         PlaceRequest<PlaceTile> request = new PlaceRequest<PlaceTile>(PlaceRequest.RequestType.CHANGE_TILE, tile);
         out.writeObject(request);
     }
@@ -64,6 +69,7 @@ public class PlaceExchange {
      * @throws IOException when something goes wrong with the stream
      */
     public static void tileChanged(ObjectOutputStream out, PlaceTile tile) throws IOException {
+        Logger.debug("PlaceExchange tileChanged " + tile);
         PlaceRequest<PlaceTile> request = new PlaceRequest<PlaceTile>(PlaceRequest.RequestType.TILE_CHANGED, tile);
         out.writeObject(request);
     }

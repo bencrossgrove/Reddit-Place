@@ -1,5 +1,6 @@
 package place.network;
 
+import place.Logger;
 import place.PlaceBoard;
 import place.PlaceBoardObservable;
 import place.PlaceTile;
@@ -13,6 +14,7 @@ import java.net.UnknownHostException;
 /**
  * Network interface for client, handles both read and write actions
  * Controller in MVC
+ *
  * @author Ben Crossgrove
  */
 
@@ -61,11 +63,13 @@ public class NetworkClient {
 
     /**
      * Constructor that handles login and receives board then spawns thread to handle client actions
-     * @param hostName client hostname
+     *
+     * @param hostName   client hostname
      * @param portNumber client port number
-     * @param username client username
+     * @param username   client username
      */
     public NetworkClient(String hostName, int portNumber, String username) {
+        Logger.debug("NetworkClient constructor");
         try {
             this.socket = new Socket(hostName, portNumber);
             this.networkOut = new ObjectOutputStream(socket.getOutputStream());
@@ -82,7 +86,7 @@ public class NetworkClient {
                 System.exit(1);
             }
             // print login success message
-            System.out.println(response.getData());
+            Logger.log((String) response.getData());
             // get the board from the server
             PlaceRequest<?> boardRes = (PlaceRequest<?>) networkIn.readObject();
             // check if board was sent
@@ -94,6 +98,7 @@ public class NetworkClient {
             PlaceBoard board = (PlaceBoard) boardRes.getData();
             this.model = new PlaceBoardObservable(board);
             // handle rest of client in separate thread
+            Logger.debug("NetworkClient spawning thread");
             Thread netThread = new Thread(this::run);
             netThread.start();
         } catch (UnknownHostException e) {
@@ -124,6 +129,7 @@ public class NetworkClient {
      * main run method
      */
     private void run() {
+        Logger.debug("NetworkClient run()");
         while (this.running()) {
             try {
                 PlaceRequest<?> request = (PlaceRequest<?>) this.networkIn.readObject();

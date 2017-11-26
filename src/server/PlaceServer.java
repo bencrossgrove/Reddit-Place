@@ -1,5 +1,6 @@
 package server;
 
+import place.Logger;
 import place.PlaceBoard;
 import place.PlaceBoardObservable;
 import place.network.PlaceExchange;
@@ -33,6 +34,8 @@ public class PlaceServer {
             System.exit(1);
         }
 
+        Logger.debug("Entered PlaceServer main");
+
         int portNumber = Integer.parseInt(args[0]);
         int boardDim = Integer.parseInt(args[1]);
         NetworkServer netServer = NetworkServer.getInstance();
@@ -43,6 +46,7 @@ public class PlaceServer {
                     new ServerSocket(portNumber);
             while (true) {
                 Socket clientSocket = serverSocket.accept();
+                Logger.debug("Socket accepted");
                 ObjectOutputStream out =
                         new ObjectOutputStream(clientSocket.getOutputStream());
                 ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
@@ -51,8 +55,10 @@ public class PlaceServer {
                     if (input.getType() == PlaceRequest.RequestType.LOGIN) {
                         String username = (String) input.getData();
                         if (users.contains(username)) {
+                            Logger.debug("Cannot log in " + username);
                             out.writeObject(new PlaceRequest<String>(PlaceRequest.RequestType.ERROR, "User " + username + " already exists"));
                         } else {
+                            Logger.debug("User " + username + " can be logged in");
                             // track users successfully logged in by adding username
                             users.add(username);
                             netServer.add(username, out);

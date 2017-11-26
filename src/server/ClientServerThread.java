@@ -1,5 +1,6 @@
 package server;
 
+import place.Logger;
 import place.PlaceBoard;
 import place.PlaceBoardObservable;
 import place.PlaceTile;
@@ -24,12 +25,14 @@ public class ClientServerThread extends Thread {
         this.in = in;
         this.clientName = clientName;
         this.board = board;
+        Logger.debug("ClientServerThread being created");
     }
 
     /**
      * run method of ClientServerThread to handle all CHANGE_TILE requests from a client
      */
     public void run() {
+        Logger.debug("ClientServerThread run");
         try {
             PlaceRequest<?> placeRequest;
             while ((placeRequest = (PlaceRequest<?>) in.readObject()) != null) {

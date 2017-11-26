@@ -7,7 +7,8 @@ package place;
 
 public class Logger {
 
-    private static boolean DEBUG = true;
+    // set to true to enable Logger.debug messages
+    private static boolean DEBUG = false;
 
     public static void debug(String message){
         if (DEBUG){

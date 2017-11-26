@@ -1,5 +1,6 @@
 package server;
 
+import place.Logger;
 import place.PlaceTile;
 import place.network.PlaceExchange;
 import place.network.PlaceRequest;
@@ -44,6 +45,7 @@ public class NetworkServer {
 
     // send tile changed to all users output streams
     public void update(PlaceTile tile) throws IOException {
+        Logger.debug("NetworkServer update " + tile);
         List<String> toRemove = new ArrayList<>();
         for (String user : users.keySet()) {
             try {

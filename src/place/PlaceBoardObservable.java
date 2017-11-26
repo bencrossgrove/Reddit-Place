@@ -7,10 +7,12 @@ public class PlaceBoardObservable extends Observable {
     PlaceBoard placeBoard;
 
     public PlaceBoardObservable(PlaceBoard board){
+        Logger.debug("PlaceBoardObservable constructor board");
         this.placeBoard = board;
     }
 
     public PlaceBoardObservable(int DIM) {
+        Logger.debug("PlaceBoardObservable constructor " + DIM);
         this.placeBoard = new PlaceBoard(DIM);
     }
 
@@ -45,6 +47,7 @@ public class PlaceBoardObservable extends Observable {
      * @param tile the new tile
      */
     public void setTile(PlaceTile tile) {
+        Logger.debug("PlaceBoardObservable setTile " + tile);
         placeBoard.setTile(tile);
         super.setChanged();
         super.notifyObservers(tile);
