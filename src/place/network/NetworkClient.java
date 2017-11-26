@@ -2,6 +2,7 @@ package place.network;
 
 import place.PlaceBoard;
 import place.PlaceBoardObservable;
+import place.PlaceTile;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -48,23 +49,25 @@ public class NetworkClient {
     /**
      * Multithread-safe mutator
      */
-    private synchronized void stop() {
+    public synchronized void stop() {
         this.go = false;
     }
 
 
     public NetworkClient(String hostName, int portNumber, String username) {
         try {
-            socket = new Socket(hostName, portNumber);
-            networkOut = new ObjectOutputStream(socket.getOutputStream());
-            networkIn = new ObjectInputStream(socket.getInputStream());
+            this.socket = new Socket(hostName, portNumber);
+            this.networkOut = new ObjectOutputStream(socket.getOutputStream());
+            this.networkIn = new ObjectInputStream(socket.getInputStream());
+            this.go = true;
 
-            PlaceRequest<String> loginRequest = new PlaceRequest<String>(PlaceRequest.RequestType.LOGIN, username);
-            networkOut.writeObject(loginRequest);
+            PlaceExchange.login(networkOut, username);
+//            PlaceRequest<String> loginRequest = new PlaceRequest<String>(PlaceRequest.RequestType.LOGIN, username);
+//            networkOut.writeObject(loginRequest);
             // login request's response
             PlaceRequest<?> response = (PlaceRequest<?>) networkIn.readObject();
             // check if login successful
-            if (response.getType() != PlaceRequest.RequestType.LOGIN_SUCCESS){
+            if (response.getType() != PlaceRequest.RequestType.LOGIN_SUCCESS) {
                 System.out.println(response.getData());
                 System.exit(1);
             }
@@ -73,13 +76,15 @@ public class NetworkClient {
             // get the board from the server
             PlaceRequest<?> boardRes = (PlaceRequest<?>) networkIn.readObject();
             // check if board was sent
-            if (boardRes.getType() != PlaceRequest.RequestType.BOARD){
+            if (boardRes.getType() != PlaceRequest.RequestType.BOARD) {
                 System.err.println("BOARD NOT RECEIVED: Expected response BOARD got " + response.getType());
                 System.exit(1);
             }
             // create instance of board
             PlaceBoard board = (PlaceBoard) boardRes.getData();
             this.model = new PlaceBoardObservable(board);
+            Thread netThread = new Thread(this::run);
+            netThread.start();
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);
             System.exit(1);
@@ -94,10 +99,38 @@ public class NetworkClient {
     }
 
     /**
+     * send a change tile request to the server
+     */
+    public void sendChangeTileReq(PlaceTile tile) {
+        try {
+            PlaceExchange.changeTile(networkOut, tile);
+//            PlaceRequest<PlaceTile> tileChange = new PlaceRequest<PlaceTile>(PlaceRequest.RequestType.CHANGE_TILE, tile);
+//            this.networkOut.writeObject(tileChange);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * main run method
      */
-    public void run() {
-
+    private void run() {
+        while (this.running()) {
+            try {
+                PlaceRequest<?> request = (PlaceRequest<?>) this.networkIn.readObject();
+                PlaceRequest.RequestType requestType = request.getType();
+                if (requestType == PlaceRequest.RequestType.TILE_CHANGED) {
+                    this.model.setTile((PlaceTile) request.getData());
+                } else {
+                    System.err.println("Bad request: " + requestType);
+                    this.stop();
+                }
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+                this.stop();
+            }
+        }
+        this.close();
     }
 
     /**

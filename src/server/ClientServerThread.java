@@ -1,43 +1,37 @@
 package server;
 
+import place.PlaceTile;
 import place.network.PlaceRequest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ClientServerThread extends Thread {
-    private Socket socket = null;
+    private ObjectInputStream in;
     private String clientName;
 
-    public ClientServerThread(Socket socket, String clientName) {
+    public ClientServerThread(ObjectInputStream in, String clientName) {
         super("ClientServerThread");
-        this.socket = socket;
+        this.in = in;
         this.clientName = clientName;
     }
 
     public void run() {
-
         try {
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-            PlaceRequest<?> inputLine, outputLine;
-            while ((inputLine = (PlaceRequest<?>) in.readObject()) != null) {
-                PlaceRequest.RequestType inputType = inputLine.getType();
-                if (inputType == PlaceRequest.RequestType.BOARD) {
-                    System.out.println("board");
-                } else if (inputType == PlaceRequest.RequestType.CHANGE_TILE) {
-
-                } else if (inputType == PlaceRequest.RequestType.TILE_CHANGED) {
-
+            PlaceRequest<?> placeRequest;
+            while ((placeRequest = (PlaceRequest<?>) in.readObject()) != null) {
+                PlaceRequest.RequestType requestType = placeRequest.getType();
+                if (requestType == PlaceRequest.RequestType.CHANGE_TILE) {
+                    PlaceTile tile = (PlaceTile) placeRequest.getData();
+                    NetworkServer.getInstance().update(tile);
                 } else {
-                    System.err.println("Unexpected request type {inputType}");
+                    System.err.println("Unexpected request type {requestType}");
                     System.exit(1);
                 }
             }
-            //socket.close();
+        } catch (SocketException se) {
+            System.out.println(clientName + " has exited");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

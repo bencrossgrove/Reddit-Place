@@ -1,10 +1,12 @@
 package server;
 
 import place.PlaceTile;
+import place.network.PlaceExchange;
 import place.network.PlaceRequest;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.SocketException;
 import java.util.*;
 
 public class NetworkServer {
@@ -30,10 +32,24 @@ public class NetworkServer {
         users.put(username, stream);
     }
 
+    private void remove(String username) {
+        users.remove(username);
+    }
+
     // send tile changed to all users output streams
     public void update(PlaceTile tile) throws IOException {
-        for (ObjectOutputStream output : users.values()){
-            output.writeObject(new PlaceRequest<PlaceTile>(PlaceRequest.RequestType.TILE_CHANGED, tile));
+        List<String> toRemove = new ArrayList<>();
+        for (String user : users.keySet()){
+            try {
+                ObjectOutputStream output = users.get(user);
+                PlaceExchange.tileChanged(output, tile);
+            } catch (SocketException se){
+                toRemove.add(user);
+            }
+        }
+        // added to prevent ConcurrentModificationException, cannot remove from list during iteration!
+        for (String removeUser : toRemove){
+            remove(removeUser);
         }
     }
 

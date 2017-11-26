@@ -2,6 +2,7 @@ package server;
 
 import place.PlaceBoard;
 import place.PlaceBoardObservable;
+import place.network.PlaceExchange;
 import place.network.PlaceRequest;
 
 import java.net.*;
@@ -67,12 +68,14 @@ public class PlaceServer {
                             users.add(username);
                             netServer.add(username, out);
                             // send login success
-                            out.writeObject(new PlaceRequest<String>(PlaceRequest.RequestType.LOGIN_SUCCESS, "Login of \'" + username + "\' was successful"));
+                            PlaceExchange.loginSuccess(out, "Login of \'" + username + "\' was successful");
+//                            out.writeObject(new PlaceRequest<String>(PlaceRequest.RequestType.LOGIN_SUCCESS, "Login of \'" + username + "\' was successful"));
                             // send board
-                            out.writeObject(new PlaceRequest<PlaceBoard>(PlaceRequest.RequestType.BOARD, model.getPlaceBoard()));
+                            PlaceExchange.board(out, model.getPlaceBoard());
+//                            out.writeObject(new PlaceRequest<PlaceBoard>(PlaceRequest.RequestType.BOARD, model.getPlaceBoard()));
                             // start thread
                             //System.out.println(clientSocket.toString());
-                            new ClientServerThread(clientSocket, username).start();
+                            new ClientServerThread(in, username).start();
                         }
                     }
                 }
