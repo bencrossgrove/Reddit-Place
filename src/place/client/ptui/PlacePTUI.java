@@ -47,16 +47,6 @@ public class PlacePTUI extends ConsoleApplication implements Observer {
         // to trigger update().
         this.displayBoard();
         this.changeTile();
-//        while (!userIn.nextLine().equals("-1")) {
-//            try {
-//                this.wait();
-//            } catch (InterruptedException ie) {
-//            }
-//        }
-    }
-
-    private synchronized void endGame() {
-        this.notify();
     }
 
 
@@ -66,12 +56,18 @@ public class PlacePTUI extends ConsoleApplication implements Observer {
     private void displayBoard() {
         userOut.println(this.model.toString());
     }
+
+    /**
+     * Where user input is accepted and sent as a new tile to the NetworkClient where the CHANGE_TILE request
+     * is then sent to the server
+     */
     private void changeTile(){
         boolean done = false;
         do {
             this.userOut.print("type move as: row column color ");
             this.userOut.flush();
             int row = this.userIn.nextInt();
+            // exit condition -1, close streams and socket then exit by calling stop()
             if (row == -1){
                 this.stop();
                 break;
@@ -90,7 +86,7 @@ public class PlacePTUI extends ConsoleApplication implements Observer {
     }
 
     /**
-     * GUI is closing, so close the network connection. Server will
+     * PTUI is closing, so close the network connection. Server will
      * get the message.
      */
     @Override
@@ -101,6 +97,11 @@ public class PlacePTUI extends ConsoleApplication implements Observer {
         System.exit(0);
     }
 
+    /**
+     * display the board after being notified of a changed tile
+     * @param o PlaceBoardObservable model
+     * @param arg tile that was changed
+     */
     @Override
     public void update(Observable o, Object arg) {
         displayBoard();
@@ -109,7 +110,7 @@ public class PlacePTUI extends ConsoleApplication implements Observer {
     /**
      * retrieve the corresponding color from PlaceColor enum
      * @param colorCode code of desired color
-     * @return the fkn color
+     * @return the color
      */
     private PlaceColor getColor(int colorCode) {
         for(PlaceColor color : PlaceColor.values())
@@ -120,10 +121,7 @@ public class PlacePTUI extends ConsoleApplication implements Observer {
     }
 
     /**
-     * Launch the JavaFX GUI.
-     *
-     * @param args not used, here, but named arguments are passed to the GUI.
-     *             <code>--host=<i>hostname</i> --port=<i>portnum</i></code>
+     * Start new console application
      */
     public static void main(String[] args) throws ClassNotFoundException {
         ConsoleApplication.launch(PlacePTUI.class, args);

@@ -18,22 +18,6 @@ public class PlaceServer {
      */
     private static List<String> users = new ArrayList<>();
 
-    /**
-     * Turn on if standard output debug messages are desired.
-     */
-    private static final boolean DEBUG = true;
-
-    /**
-     * Print method that does something only if DEBUG is true
-     *
-     * @param logMsg the message to log
-     */
-    private static void dPrint( Object logMsg ) {
-        if ( PlaceServer.DEBUG ) {
-            System.out.println( logMsg );
-        }
-    }
-
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         if (args.length != 2) {
             System.err.println("Usage: java Server <port number> <board dimension");
@@ -57,25 +41,21 @@ public class PlaceServer {
                         new ObjectOutputStream(clientSocket.getOutputStream());
                 ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
                 PlaceRequest<?> input;
-                dPrint(clientSocket);
                 if ((input = (PlaceRequest<?>) in.readObject()) != null) {
                     if (input.getType() == PlaceRequest.RequestType.LOGIN) {
                         String username = (String) input.getData();
-                        dPrint(username);
                         if (users.contains(username)) {
                             out.writeObject(new PlaceRequest<String>(PlaceRequest.RequestType.ERROR, "User " + username + " already exists"));
                         } else {
+                            // track users successfully logged in by adding username
                             users.add(username);
                             netServer.add(username, out);
                             // send login success
                             PlaceExchange.loginSuccess(out, "Login of \'" + username + "\' was successful");
-//                            out.writeObject(new PlaceRequest<String>(PlaceRequest.RequestType.LOGIN_SUCCESS, "Login of \'" + username + "\' was successful"));
                             // send board
                             PlaceExchange.board(out, model.getPlaceBoard());
-//                            out.writeObject(new PlaceRequest<PlaceBoard>(PlaceRequest.RequestType.BOARD, model.getPlaceBoard()));
                             // start thread
-                            //System.out.println(clientSocket.toString());
-                            new ClientServerThread(in, username).start();
+                            new ClientServerThread(in, username, model).start();
                         }
                     }
                 }

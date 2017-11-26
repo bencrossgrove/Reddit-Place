@@ -18,22 +18,22 @@ public class NetworkClient {
     private Socket socket;
 
     /**
-     * used to read requests from the reversi server.
+     * used to read requests from the server.
      */
     private ObjectInputStream networkIn;
 
     /**
-     * used to write responses to the reversi server.
+     * used to write responses to the server.
      */
     private ObjectOutputStream networkOut;
 
     /**
-     * used to keep track of the state of the game.
+     * used to keep track of the state of the board.
      */
     private PlaceBoardObservable model;
 
     /**
-     * used to control the main game loop.
+     * used to control the main loop.
      */
     private boolean go;
 
@@ -53,7 +53,12 @@ public class NetworkClient {
         this.go = false;
     }
 
-
+    /**
+     * Constructor that handles login and receives board then spawns thread to handle client actions
+     * @param hostName client hostname
+     * @param portNumber client port number
+     * @param username client username
+     */
     public NetworkClient(String hostName, int portNumber, String username) {
         try {
             this.socket = new Socket(hostName, portNumber);
@@ -61,9 +66,8 @@ public class NetworkClient {
             this.networkIn = new ObjectInputStream(socket.getInputStream());
             this.go = true;
 
+            // send login request
             PlaceExchange.login(networkOut, username);
-//            PlaceRequest<String> loginRequest = new PlaceRequest<String>(PlaceRequest.RequestType.LOGIN, username);
-//            networkOut.writeObject(loginRequest);
             // login request's response
             PlaceRequest<?> response = (PlaceRequest<?>) networkIn.readObject();
             // check if login successful
@@ -83,6 +87,7 @@ public class NetworkClient {
             // create instance of board
             PlaceBoard board = (PlaceBoard) boardRes.getData();
             this.model = new PlaceBoardObservable(board);
+            // handle rest of client in separate thread
             Thread netThread = new Thread(this::run);
             netThread.start();
         } catch (UnknownHostException e) {
@@ -104,8 +109,6 @@ public class NetworkClient {
     public void sendChangeTileReq(PlaceTile tile) {
         try {
             PlaceExchange.changeTile(networkOut, tile);
-//            PlaceRequest<PlaceTile> tileChange = new PlaceRequest<PlaceTile>(PlaceRequest.RequestType.CHANGE_TILE, tile);
-//            this.networkOut.writeObject(tileChange);
         } catch (IOException e) {
             e.printStackTrace();
         }

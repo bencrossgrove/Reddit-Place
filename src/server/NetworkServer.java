@@ -44,6 +44,7 @@ public class NetworkServer {
                 ObjectOutputStream output = users.get(user);
                 PlaceExchange.tileChanged(output, tile);
             } catch (SocketException se){
+                // add to list of sockets to be removed due to logoff from client
                 toRemove.add(user);
             }
         }

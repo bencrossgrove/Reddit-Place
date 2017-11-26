@@ -1,5 +1,7 @@
 package server;
 
+import place.PlaceBoard;
+import place.PlaceBoardObservable;
 import place.PlaceTile;
 import place.network.PlaceRequest;
 
@@ -10,13 +12,18 @@ import java.net.SocketException;
 public class ClientServerThread extends Thread {
     private ObjectInputStream in;
     private String clientName;
+    private PlaceBoardObservable board;
 
-    public ClientServerThread(ObjectInputStream in, String clientName) {
+    public ClientServerThread(ObjectInputStream in, String clientName, PlaceBoardObservable board) {
         super("ClientServerThread");
         this.in = in;
         this.clientName = clientName;
+        this.board = board;
     }
 
+    /**
+     * run method of ClientServerThread to handle all CHANGE_TILE requests from a client
+     */
     public void run() {
         try {
             PlaceRequest<?> placeRequest;
@@ -25,6 +32,7 @@ public class ClientServerThread extends Thread {
                 if (requestType == PlaceRequest.RequestType.CHANGE_TILE) {
                     PlaceTile tile = (PlaceTile) placeRequest.getData();
                     NetworkServer.getInstance().update(tile);
+                    board.getPlaceBoard().setTile(tile);
                 } else {
                     System.err.println("Unexpected request type {requestType}");
                     System.exit(1);
