@@ -9,16 +9,16 @@ import java.io.Serializable;
  * @author Sean Strout @ RIT CS
  */
 public enum PlaceColor implements Serializable {
-    BLACK("black", 0, 0, 0, 0),
-    GRAY("gray", 128, 128, 128, 1),
-    SILVER("silver", 192, 192, 192, 2),
-    WHITE("white", 255, 255, 255, 3),
-    MAROON("maroon", 128, 0, 0, 4),
-    RED("red", 255, 0, 0, 5),
-    OLIVE("olive", 128, 128, 0, 6),
-    YELLOW("yellow", 255, 255, 0, 7),
-    GREEN("green", 0, 128, 0, 8),
-    LIME("lime", 0, 255, 0, 9),
+    BLACK("black", 0, 0, 0, 0), //0
+    GRAY("gray", 128, 128, 128, 1), //394 b
+    SILVER("silver", 192, 192, 192, 2), //576 b
+    WHITE("white", 255, 255, 255, 3), //765 b
+    MAROON("maroon", 128, 0, 0, 4), //128
+    RED("red", 255, 0, 0, 5), //255
+    OLIVE("olive", 128, 128, 0, 6), //256
+    YELLOW("yellow", 255, 255, 0, 7), //510 b
+    GREEN("green", 0, 128, 0, 8), //128
+    LIME("lime", 0, 255, 0, 9), //255 b
     TEAL("teal", 0, 128, 128, 10),
     AQUA("aqua", 0, 255, 255, 11),
     NAVY("navy", 0, 0, 128, 12),
@@ -26,27 +26,39 @@ public enum PlaceColor implements Serializable {
     PURPLE("purple", 128, 0, 128, 14),
     FUCHSIA("fuschia", 255, 0, 255, 15);
 
-    /** Yes, there are 16 colors */
+    /**
+     * Yes, there are 16 colors
+     */
     public final static int TOTAL_COLORS = 16;
 
-    /** The color name */
+    /**
+     * The color name
+     */
     private String name;
-    /** Red intensity, 0-255 */
+    /**
+     * Red intensity, 0-255
+     */
     private int red;
-    /** Green intensity, 0-255 */
+    /**
+     * Green intensity, 0-255
+     */
     private int green;
-    /** Blue intensity, 0-255 */
+    /**
+     * Blue intensity, 0-255
+     */
     private int blue;
-    /** The color number, 0-15 */
+    /**
+     * The color number, 0-15
+     */
     private int number;
 
     /**
      * Create a new color.
      *
-     * @param name color name
-     * @param red red intensity, 0-255
-     * @param green green intensity, 0-255
-     * @param blue blue intensity, 0-255
+     * @param name   color name
+     * @param red    red intensity, 0-255
+     * @param green  green intensity, 0-255
+     * @param blue   blue intensity, 0-255
      * @param number color number, 0-15
      */
     PlaceColor(String name, int red, int green, int blue, int number) {
@@ -62,28 +74,36 @@ public enum PlaceColor implements Serializable {
      *
      * @return red intensity
      */
-    public int getRed() { return this.red; }
+    public int getRed() {
+        return this.red;
+    }
 
     /**
      * Get the green intensity, 0-255.
      *
      * @return green intensity
      */
-    public int getGreen() { return this.green; }
+    public int getGreen() {
+        return this.green;
+    }
 
     /**
      * Get the blue intensity, 0-255.
      *
      * @return blue intensity
      */
-    public int getBlue() { return this.blue; }
+    public int getBlue() {
+        return this.blue;
+    }
 
     /**
      * The color number, 0-15.
      *
      * @return the color number
      */
-    public int getNumber() { return this.number; }
+    public int getNumber() {
+        return this.number;
+    }
 
     /**
      * Returns the hex string for the color number, 0-F.
