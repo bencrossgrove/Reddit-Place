@@ -1,11 +1,18 @@
 package place.client.gui;
 
+/**
+ * A JavaFx GUI version of Place
+ * @author Ben Crossgrove
+ * @author Mitch Leadley
+ */
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ToggleButton;
@@ -17,12 +24,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import place.*;
 import place.network.NetworkClient;
 
-import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -31,11 +39,10 @@ public class PlaceGUI extends Application implements Observer {
     private PlaceBoardObservable model;
     private NetworkClient networkClient;
     private List<String> params = null;
-
     private String username;
 
     private final GridPane grid = new GridPane();
-    ToggleGroup colors = new ToggleGroup();
+    private ToggleGroup colors = new ToggleGroup();
 
     private static int dim;
     private static int WINDOW_SIZE = 500;
@@ -87,22 +94,33 @@ public class PlaceGUI extends Application implements Observer {
         setStage(primaryStage, scene);
     }
 
+    /**
+     * setup the gui window with scene created in start()
+     *
+     * @param primaryStage the top level container
+     * @param scene        the contents to be added
+     */
     private void setStage(Stage primaryStage, Scene scene) {
         primaryStage.setTitle("Place: " + username);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                System.out.println("Stage is closing");
+                primaryStage.close();
+                networkClient.stop();
+                System.exit(0);
+            }
+        });
     }
 
     /**
      * creates and returns a grid layout of buttons.
      */
     private Pane createGrid() {
-
         dim = model.getBoard().length;
-
         initializeGrid();
-
         return grid;
     }
 
@@ -128,21 +146,16 @@ public class PlaceGUI extends Application implements Observer {
             if (i == 0) {
                 btn.setSelected(true);
             }
-//            btn.setOnMouseClicked(new EventHandler<MouseEvent>()
-//            {
-//                @Override
-//                public void handle(MouseEvent t) {
-//
-//                }
-//            });
             colorsPane.getChildren().addAll(btn);
         }
         colorsPane.setAlignment(Pos.CENTER);
         return colorsPane;
     }
 
+    /**
+     * creates the grid based on the current board (model)
+     */
     private void initializeGrid() {
-        // build grid
         for (int r = 0; r < dim; ++r) {
             for (int c = 0; c < dim; ++c) {
                 PlaceTile current = model.getTile(r, c);
@@ -153,13 +166,19 @@ public class PlaceGUI extends Application implements Observer {
         grid.setAlignment(Pos.CENTER);
     }
 
+    /**
+     * creates a rectangle that represents the tile to be placed in the grid
+     *
+     * @param current the tile to be placed
+     * @return rectangle representation of tile
+     */
     private Rectangle createTileRect(PlaceTile current) {
         Rectangle tile = new Rectangle();
         tile.setWidth(WINDOW_SIZE / dim);
         tile.setHeight(WINDOW_SIZE / dim);
         Color color = Color.rgb(current.getColor().getRed(), current.getColor().getGreen(), current.getColor().getBlue());
         tile.setFill(color);
-
+        // create graphic for Tooltip
         Rectangle tileGraphic = new Rectangle();
         tileGraphic.setWidth(25);
         tileGraphic.setHeight(25);
@@ -171,24 +190,31 @@ public class PlaceGUI extends Application implements Observer {
         t.setGraphic(tileGraphic);
         Tooltip.install(tile, t);
 
-        tile.setOnMouseClicked(new EventHandler<MouseEvent>()
-        {
+        tile.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
                 int x = current.getRow();
                 int y = current.getCol();
-                Logger.debug("Tile clicked: (" + x + ", " + y +")");
-                ToggleButton selected = (ToggleButton) colors.getSelectedToggle();
-                System.out.println("Selected toggle properties: " + selected.getStyle());
-                int start = selected.getStyle().indexOf(":");
-                String colorString = selected.getStyle().substring(start+1, selected.getStyle().length());
-                System.out.println(colorString);
+                Logger.debug("Tile clicked: (" + x + ", " + y + ")");
+                String colorString = getSelectedColorName();
+                Logger.debug(colorString);
                 PlaceTile newTile = new PlaceTile(x, y, username, PlaceColor.valueOf(colorString), System.currentTimeMillis());
                 networkClient.sendChangeTileReq(newTile);
             }
         });
 
         return tile;
+    }
+
+    /**
+     * get the color from the selected toggle button in the colors pane
+     *
+     * @return string / name of the color
+     */
+    private String getSelectedColorName() {
+        ToggleButton selected = (ToggleButton) colors.getSelectedToggle();
+        int start = selected.getStyle().indexOf(":");
+        return selected.getStyle().substring(start + 1, selected.getStyle().length());
     }
 
     /**
@@ -201,6 +227,13 @@ public class PlaceGUI extends Application implements Observer {
         grid.add(newTileRect, tile.getRow(), tile.getCol());
     }
 
+    /**
+     * get argument at a specific index
+     * checked that args.length == 3 beforehand
+     *
+     * @param index the index to get the argument from
+     * @return the argument
+     */
     private String getParamAtIndex(int index) {
         if (params == null) {
             params = super.getParameters().getRaw();
