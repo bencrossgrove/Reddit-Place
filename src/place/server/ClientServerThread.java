@@ -1,13 +1,11 @@
-package server;
+package place.server;
 
 import place.Logger;
-import place.PlaceBoard;
 import place.PlaceBoardObservable;
 import place.PlaceTile;
 import place.network.PlaceRequest;
 
 import java.io.*;
-import java.net.Socket;
 import java.net.SocketException;
 
 /**

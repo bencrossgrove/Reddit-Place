@@ -63,7 +63,7 @@ public class PlacePTUI extends ConsoleApplication implements Observer {
 
     /**
      * Where user input is accepted and sent as a new tile to the NetworkClient where the CHANGE_TILE request
-     * is then sent to the server
+     * is then sent to the place.server
      */
     private void changeTile() {
         boolean done = false;

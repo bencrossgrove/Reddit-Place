@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * This is the class that represents the requests that are transmitted between
- * the server and clients.  These objects will be sent and received using
+ * the place.server and clients.  These objects will be sent and received using
  * PlaceExchange.
  *
  * @param <E> the data type (depends on the request type):<br>
@@ -20,43 +20,43 @@ import java.io.Serializable;
 public class PlaceRequest<E extends Serializable> implements Serializable {
     public enum RequestType {
         /**
-         * After a successful client login, the server will send the current
+         * After a successful client login, the place.server will send the current
          * Board to the client.  This is only sent once - afterwards the
          * only information transmitted are the tile changes.
          */
         BOARD,
 
         /**
-         * A client's request to the server to change a tile.  It will contain
+         * A client's request to the place.server to change a tile.  It will contain
          * a Tile object.  It is important to note that the client should not
-         * change the tile in their board until it is acknowledged by the server
+         * change the tile in their board until it is acknowledged by the place.server
          * via the TILE_CHANGED request.
          */
         CHANGE_TILE,
 
         /**
-         * Used for the server to tell the client there was an error.  It will
+         * Used for the place.server to tell the client there was an error.  It will
          * contain a message about the error. One place this is used is to tell
          * the client a login failed (because the username already exists).  It
-         * is also used to indicate the server is shutting down, or any other
+         * is also used to indicate the place.server is shutting down, or any other
          * unusual things happen.
          */
         ERROR,
 
         /**
-         * Used by the client to login to the server.  It will contain a string
+         * Used by the client to login to the place.server.  It will contain a string
          * that is the desired username for the client.
          */
         LOGIN,
 
         /**
-         * Used by the server to indicate to the client the login succeeded.
+         * Used by the place.server to indicate to the client the login succeeded.
          * It will contain a string indicating this.
          */
         LOGIN_SUCCESS,
 
         /**
-         * Used by the server to indicate to all clients that a tile has
+         * Used by the place.server to indicate to all clients that a tile has
          * officially been changed.  It will contain the new Tile object.
          * The clients should update their view of the board each time
          * a tile change arrives.

@@ -1,9 +1,8 @@
-package server;
+package place.server;
 
 import place.Logger;
 import place.PlaceTile;
 import place.network.PlaceExchange;
-import place.network.PlaceRequest;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -34,7 +33,7 @@ public class NetworkServer {
         return server;
     }
 
-    // add a user to the network server
+    // add a user to the network place.server
     public void add(String username, ObjectOutputStream stream) {
         users.put(username, stream);
     }

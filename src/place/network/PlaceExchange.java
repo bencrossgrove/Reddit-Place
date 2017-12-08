@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 /**
- * Used to pass requests to the server
+ * Used to pass requests to the place.server
  * @author Ben Crossgrove
  */
 
@@ -16,7 +16,7 @@ public class PlaceExchange {
 
     /**
      * handle LOGIN requests
-     * @param out stream to send to server
+     * @param out stream to send to place.server
      * @param client user who sent request
      * @throws IOException when something goes wrong with the stream
      */
@@ -28,7 +28,7 @@ public class PlaceExchange {
 
     /**
      * handle LOGIN_SUCCESS requests
-     * @param out stream to send to server
+     * @param out stream to send to place.server
      * @param message message about user who is now logged in
      * @throws IOException when something goes wrong with the stream
      */
@@ -40,7 +40,7 @@ public class PlaceExchange {
 
     /**
      * handle BOARD requests
-     * @param out stream to send to server
+     * @param out stream to send to place.server
      * @param board the board to be used
      * @throws IOException when something goes wrong with the stream
      */
@@ -52,7 +52,7 @@ public class PlaceExchange {
 
     /**
      * handle CHANGE_TILE requests
-     * @param out stream to send to server
+     * @param out stream to send to place.server
      * @param tile the changed tile
      * @throws IOException when something goes wrong with the stream
      */
@@ -64,7 +64,7 @@ public class PlaceExchange {
 
     /**
      * handle TILE_CHANGED requests
-     * @param out stream to send to server
+     * @param out stream to send to place.server
      * @param tile the changed tile
      * @throws IOException when something goes wrong with the stream
      */

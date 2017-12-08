@@ -21,17 +21,17 @@ import java.net.UnknownHostException;
 public class NetworkClient {
 
     /**
-     * used to communicate with the reversi server.
+     * used to communicate with the reversi place.server.
      */
     private Socket socket;
 
     /**
-     * used to read requests from the server.
+     * used to read requests from the place.server.
      */
     private ObjectInputStream networkIn;
 
     /**
-     * used to write responses to the server.
+     * used to write responses to the place.server.
      */
     private ObjectOutputStream networkOut;
 
@@ -87,7 +87,7 @@ public class NetworkClient {
             }
             // print login success message
             Logger.log((String) response.getData());
-            // get the board from the server
+            // get the board from the place.server
             PlaceRequest<?> boardRes = (PlaceRequest<?>) networkIn.readObject();
             // check if board was sent
             if (boardRes.getType() != PlaceRequest.RequestType.BOARD) {
@@ -115,7 +115,7 @@ public class NetworkClient {
     }
 
     /**
-     * send a change tile request to the server
+     * send a change tile request to the place.server
      */
     public void sendChangeTileReq(PlaceTile tile) {
         try {

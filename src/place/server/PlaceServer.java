@@ -1,7 +1,6 @@
-package server;
+package place.server;
 
 import place.Logger;
-import place.PlaceBoard;
 import place.PlaceBoardObservable;
 import place.network.PlaceExchange;
 import place.network.PlaceRequest;
@@ -21,7 +20,7 @@ import java.util.List;
 public class PlaceServer {
 
     /**
-     * static list of users that are successfully logged in to the server
+     * static list of users that are successfully logged in to the place.server
      */
     private static List<String> users = new ArrayList<>();
 

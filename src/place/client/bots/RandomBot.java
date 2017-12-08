@@ -38,7 +38,7 @@ public class RandomBot {
 
     /**
      * Where user input is accepted and sent as a new tile to the NetworkClient where the CHANGE_TILE request
-     * is then sent to the server
+     * is then sent to the place.server
      */
     private static void changeTiles(int boardDim, String username, NetworkClient networkClient) {
         boolean done = false;
