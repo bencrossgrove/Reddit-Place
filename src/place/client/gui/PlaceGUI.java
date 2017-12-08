@@ -2,12 +2,16 @@ package place.client.gui;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -18,6 +22,7 @@ import javafx.stage.Stage;
 import place.*;
 import place.network.NetworkClient;
 
+import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -30,6 +35,7 @@ public class PlaceGUI extends Application implements Observer {
     private String username;
 
     private final GridPane grid = new GridPane();
+    ToggleGroup colors = new ToggleGroup();
 
     private static int dim;
     private static int WINDOW_SIZE = 500;
@@ -107,7 +113,6 @@ public class PlaceGUI extends Application implements Observer {
      */
     private HBox createColorsPane() {
         HBox colorsPane = new HBox();
-        ToggleGroup colors = new ToggleGroup();
         for (int i = 0; i < PlaceColor.TOTAL_COLORS; i++) {
             ToggleButton btn = new ToggleButton(Integer.toHexString(i));
             PlaceColor currentColor = PlaceColorUtil.getColor(i);
@@ -123,6 +128,13 @@ public class PlaceGUI extends Application implements Observer {
             if (i == 0) {
                 btn.setSelected(true);
             }
+//            btn.setOnMouseClicked(new EventHandler<MouseEvent>()
+//            {
+//                @Override
+//                public void handle(MouseEvent t) {
+//
+//                }
+//            });
             colorsPane.getChildren().addAll(btn);
         }
         colorsPane.setAlignment(Pos.CENTER);
@@ -158,6 +170,24 @@ public class PlaceGUI extends Application implements Observer {
         Tooltip t = new Tooltip("(" + current.getRow() + ", " + current.getCol() + ")\n" + current.getOwner() + "\n" + sdf.format(d) + "\n" + current.getColor().name());
         t.setGraphic(tileGraphic);
         Tooltip.install(tile, t);
+
+        tile.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent t) {
+                int x = current.getRow();
+                int y = current.getCol();
+                Logger.debug("Tile clicked: (" + x + ", " + y +")");
+                ToggleButton selected = (ToggleButton) colors.getSelectedToggle();
+                System.out.println("Selected toggle properties: " + selected.getStyle());
+                int start = selected.getStyle().indexOf(":");
+                String colorString = selected.getStyle().substring(start+1, selected.getStyle().length());
+                System.out.println(colorString);
+                PlaceTile newTile = new PlaceTile(x, y, username, PlaceColor.valueOf(colorString), System.currentTimeMillis());
+                networkClient.sendChangeTileReq(newTile);
+            }
+        });
+
         return tile;
     }
 
