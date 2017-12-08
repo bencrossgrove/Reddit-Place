@@ -1,5 +1,7 @@
 package place;
 
+import java.awt.*;
+
 /**
  * Used to retrieve a color based on it's color code
  * @author Ben Crossgrove
@@ -19,6 +21,14 @@ public class PlaceColorUtil {
                 return color;
             }
         return PlaceColor.WHITE;
+    }
+
+    public static float[] getHSB(PlaceColor color) {
+        int red = color.getRed();
+        int green = color.getGreen();
+        int blue = color.getBlue();
+        float[] hsv = new float[3];
+        return Color.RGBtoHSB(red, green, blue ,hsv);
     }
 
 }

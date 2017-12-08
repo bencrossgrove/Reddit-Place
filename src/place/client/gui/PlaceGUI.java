@@ -2,6 +2,7 @@ package place.client.gui;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ToggleButton;
@@ -18,10 +19,7 @@ import place.*;
 import place.network.NetworkClient;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 public class PlaceGUI extends Application implements Observer {
 
@@ -34,6 +32,7 @@ public class PlaceGUI extends Application implements Observer {
     private final GridPane grid = new GridPane();
 
     private static int dim;
+    private static int WINDOW_SIZE = 500;
 
     public static void main(String[] args) {
         // validate args
@@ -69,6 +68,8 @@ public class PlaceGUI extends Application implements Observer {
      */
     public void start(Stage primaryStage) throws Exception {
         BorderPane border = new BorderPane();
+        border.setPrefHeight(WINDOW_SIZE);
+        border.setPrefWidth(WINDOW_SIZE);
 
         Pane grid = createGrid();
         border.setCenter(grid);
@@ -101,21 +102,30 @@ public class PlaceGUI extends Application implements Observer {
 
     /**
      * create the colors pane to allow user to select colors
+     *
      * @return pane of color options
      */
     private HBox createColorsPane() {
         HBox colorsPane = new HBox();
         ToggleGroup colors = new ToggleGroup();
-        for (int i = 0; i < PlaceColor.TOTAL_COLORS; i++){
+        for (int i = 0; i < PlaceColor.TOTAL_COLORS; i++) {
             ToggleButton btn = new ToggleButton(Integer.toHexString(i));
-            btn.setStyle("-fx-background-color:" + PlaceColorUtil.getColor(i).name());
+            PlaceColor currentColor = PlaceColorUtil.getColor(i);
+            btn.setMaxWidth(WINDOW_SIZE / dim);
+            btn.setStyle("-fx-background-color:" + currentColor.name());
+            float[] hsbValue = PlaceColorUtil.getHSB(currentColor);
+            float brightness = hsbValue[2];
+            if (brightness < 0.6) {
+                btn.setTextFill(Color.WHITE);
+            }
             btn.setToggleGroup(colors);
             // default to black
-            if (i == 0){
+            if (i == 0) {
                 btn.setSelected(true);
             }
             colorsPane.getChildren().addAll(btn);
         }
+        colorsPane.setAlignment(Pos.CENTER);
         return colorsPane;
     }
 
@@ -128,12 +138,13 @@ public class PlaceGUI extends Application implements Observer {
                 grid.add(tile, r, c);
             }
         }
+        grid.setAlignment(Pos.CENTER);
     }
 
     private Rectangle createTileRect(PlaceTile current) {
         Rectangle tile = new Rectangle();
-        tile.setWidth(50);
-        tile.setHeight(50);
+        tile.setWidth(WINDOW_SIZE / dim);
+        tile.setHeight(WINDOW_SIZE / dim);
         Color color = Color.rgb(current.getColor().getRed(), current.getColor().getGreen(), current.getColor().getBlue());
         tile.setFill(color);
 
@@ -152,6 +163,7 @@ public class PlaceGUI extends Application implements Observer {
 
     /**
      * updates a specific tile on tile change req
+     *
      * @param tile the tile to change
      */
     private void updateTile(PlaceTile tile) {
