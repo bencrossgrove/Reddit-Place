@@ -1,11 +1,5 @@
 package place.client.gui;
 
-/**
- * A JavaFx GUI version of Place
- * @author Ben Crossgrove
- * @author Mitch Leadley
- */
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -15,14 +9,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -33,6 +25,12 @@ import place.network.NetworkClient;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+/**
+ * A JavaFx GUI version of Place
+ * @author Ben Crossgrove
+ * @author Mitch Leadley
+ */
 
 public class PlaceGUI extends Application implements Observer {
 
@@ -129,8 +127,12 @@ public class PlaceGUI extends Application implements Observer {
      *
      * @return pane of color options
      */
-    private HBox createColorsPane() {
+    private VBox createColorsPane() {
+        VBox bottomPane = new VBox();
         HBox colorsPane = new HBox();
+        HBox labelPane = new HBox();
+        // will default to black
+        Label selectedColor = new Label("Current Color: " + PlaceColor.BLACK.name());
         for (int i = 0; i < PlaceColor.TOTAL_COLORS; i++) {
             ToggleButton btn = new ToggleButton(Integer.toHexString(i));
             PlaceColor currentColor = PlaceColorUtil.getColor(i);
@@ -146,10 +148,20 @@ public class PlaceGUI extends Application implements Observer {
             if (i == 0) {
                 btn.setSelected(true);
             }
+            btn.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    selectedColor.setText("Current Color: " + currentColor.name());
+                }
+            });
             colorsPane.getChildren().addAll(btn);
         }
+        labelPane.getChildren().add(selectedColor);
         colorsPane.setAlignment(Pos.CENTER);
-        return colorsPane;
+        labelPane.setAlignment(Pos.CENTER);
+        bottomPane.getChildren().addAll(colorsPane, labelPane);
+        bottomPane.setAlignment(Pos.CENTER);
+        return bottomPane;
     }
 
     /**
