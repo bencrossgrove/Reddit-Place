@@ -11,7 +11,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Ben Crossgrove
  */
 
-public class ColorCycleBot {
+public class ColorCycleBot extends Bot {
+
+    public ColorCycleBot(String hostName, int portNumber, String username){
+        super(hostName, portNumber, username);
+    }
 
     public static void main(String[] args) {
         if (args.length != 3) {
@@ -24,24 +28,15 @@ public class ColorCycleBot {
         int portNumber = Integer.parseInt(args[1]);
         String username = args[2];
 
-        setup(hostName, portNumber, username);
+        Bot colorCycleBot = new ColorCycleBot(hostName, portNumber, username);
+
+        colorCycleBot.execute();
     }
-
-    private static void setup(String hostName, int portNumber, String username) {
-        System.out.println("Client connecting to " + hostName + ":" + portNumber + "\n");
-
-        NetworkClient networkClient = new NetworkClient(hostName, portNumber, username);
-
-        PlaceBoardObservable model = networkClient.getModel();
-        int boardDim = model.getPlaceBoard().DIM;
-        changeTiles(boardDim, username, networkClient);
-    }
-
 
     /**
-     * bot main loop to cycle colors and place tiles in snake-like pattern
+     * loop to cycle colors and place tiles in snake-like pattern
      */
-    private static void changeTiles(int boardDim, String username, NetworkClient networkClient) {
+    protected void changeTiles(int boardDim, String username, NetworkClient networkClient) {
         int x = 0;
         int y = (boardDim - 1);
         int col = x;
@@ -70,8 +65,7 @@ public class ColorCycleBot {
                 }
             }
         } catch (Exception e) {
-            // properly terminate network client
-            networkClient.stop();
+            System.out.println("Bot terminated");
         }
 
     }

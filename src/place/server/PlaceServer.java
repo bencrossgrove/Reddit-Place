@@ -27,7 +27,7 @@ public class PlaceServer {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         if (args.length != 2) {
-            System.err.println("Usage: java Server <port number> <board dimension");
+            System.err.println("Usage: java Server <port number> <board dimension>");
             System.exit(1);
         } else if (Integer.parseInt(args[1]) < 1) {
             System.err.println("Board dimension must be >= 1");
@@ -89,6 +89,8 @@ public class PlaceServer {
                     + portNumber + " or listening for a connection");
             System.out.println(e.getMessage());
             System.out.println(Arrays.toString(e.getStackTrace()));
+        } finally {
+            netServer.close();
         }
 
     }

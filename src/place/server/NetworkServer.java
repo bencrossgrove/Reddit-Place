@@ -4,8 +4,7 @@ import place.Logger;
 import place.PlaceTile;
 import place.network.PlaceExchange;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.SocketException;
 import java.util.*;
 
@@ -19,11 +18,18 @@ public class NetworkServer {
 
     private static NetworkServer server;
 
-    private Map<String, ObjectOutputStream> users = new HashMap<String, ObjectOutputStream>() {
-    };
+    private Map<String, ObjectOutputStream> users = new HashMap<String, ObjectOutputStream>() {};
+    private File file;
+    private ObjectOutputStream oos;
 
     private NetworkServer() {
         super();
+        this.file = new File("tile-changes.txt");
+        try {
+            this.oos = new ObjectOutputStream(new FileOutputStream(file));
+        } catch (IOException e) {
+            this.oos = null;
+        }
     }
 
     public static NetworkServer getInstance() {
@@ -55,9 +61,26 @@ public class NetworkServer {
                 toRemove.add(user);
             }
         }
+        // logs tile changes to file
+        logToFile(tile);
         // added to prevent ConcurrentModificationException, cannot remove from list during iteration!
         for (String removeUser : toRemove) {
             remove(removeUser);
+        }
+    }
+
+    private void logToFile(PlaceTile tile) throws IOException {
+        if (oos != null) {
+            PlaceExchange.tileChanged(oos, tile);
+        }
+    }
+
+    public void close() {
+        try {
+            oos.close();
+            server.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

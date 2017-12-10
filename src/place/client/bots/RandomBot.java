@@ -7,10 +7,15 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * a bot that sets tiles of random color and coordinates on the board
+ *
  * @author Ben Crossgrove
  */
 
-public class RandomBot {
+public class RandomBot extends Bot {
+
+    public RandomBot(String hostName, int portNumber, String username) {
+        super(hostName, portNumber, username);
+    }
 
     public static void main(String[] args) {
         if (args.length != 3) {
@@ -23,23 +28,16 @@ public class RandomBot {
         int portNumber = Integer.parseInt(args[1]);
         String username = args[2];
 
-        setup(hostName, portNumber, username);
+        Bot randomBot = new RandomBot(hostName, portNumber, username);
+
+        randomBot.execute();
     }
 
-    private static void setup(String hostName, int portNumber, String username) {
-        System.out.println("Client connecting to " + hostName + ":" + portNumber + "\n");
-
-        NetworkClient networkClient = new NetworkClient(hostName, portNumber, username);
-
-        PlaceBoardObservable model = networkClient.getModel();
-        int boardDim = model.getPlaceBoard().DIM;
-        changeTiles(boardDim, username, networkClient);
-    }
 
     /**
-     * bot main loop that places tiles of random color and coordinate on board
+     * loop that places tiles of random color and coordinate on board
      */
-    private static void changeTiles(int boardDim, String username, NetworkClient networkClient) {
+    protected void changeTiles(int boardDim, String username, NetworkClient networkClient) {
         boolean done = false;
         try {
             while (true) {
@@ -57,8 +55,7 @@ public class RandomBot {
                 }
             }
         } catch (Exception e) {
-            // properly terminate network client
-            networkClient.stop();
+            System.out.println("Bot terminated");
         }
     }
 }
