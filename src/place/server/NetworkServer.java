@@ -11,6 +11,7 @@ import java.util.*;
 /**
  * Handles TILE_CHANGED requests to be sent to all clients
  * Singleton
+ *
  * @author Ben Crossgrove
  */
 
@@ -18,7 +19,8 @@ public class NetworkServer {
 
     private static NetworkServer server;
 
-    private Map<String, ObjectOutputStream> users = new HashMap<String, ObjectOutputStream>() {};
+    private Map<String, ObjectOutputStream> users = new HashMap<String, ObjectOutputStream>() {
+    };
     private File file;
     private ObjectOutputStream oos;
 
@@ -32,6 +34,11 @@ public class NetworkServer {
         }
     }
 
+    /**
+     * get instance of the network server
+     *
+     * @return the network server (singleton)
+     */
     public static NetworkServer getInstance() {
         if (server == null) {
             server = new NetworkServer();
@@ -44,6 +51,7 @@ public class NetworkServer {
         users.put(username, stream);
     }
 
+    // remove a user from server
     public void remove(String username) {
         users.remove(username);
     }
@@ -69,16 +77,24 @@ public class NetworkServer {
         }
     }
 
+    /**
+     * send tile changed requests to file
+     *
+     * @param tile tile to send
+     * @throws IOException if something goes wrong with file
+     */
     private void logToFile(PlaceTile tile) throws IOException {
         if (oos != null) {
             PlaceExchange.tileChanged(oos, tile);
         }
     }
 
+    /**
+     * close the stream
+     */
     public void close() {
         try {
             oos.close();
-            server.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

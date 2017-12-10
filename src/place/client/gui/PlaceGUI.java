@@ -175,7 +175,7 @@ public class PlaceGUI extends Application implements Observer {
             for (int c = 0; c < dim; ++c) {
                 PlaceTile current = model.getTile(r, c);
                 Rectangle tile = createTileRect(current);
-                grid.add(tile, r, c);
+                grid.add(tile, c, r);
             }
         }
         grid.setAlignment(Pos.CENTER);
@@ -239,7 +239,7 @@ public class PlaceGUI extends Application implements Observer {
      */
     private void updateTile(PlaceTile tile) {
         Rectangle newTileRect = createTileRect(tile);
-        grid.add(newTileRect, tile.getRow(), tile.getCol());
+        grid.add(newTileRect, tile.getCol(), tile.getRow());
     }
 
     /**

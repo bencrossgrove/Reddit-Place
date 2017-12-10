@@ -29,7 +29,7 @@ public abstract class Bot {
         PlaceBoardObservable model = networkClient.getModel();
         int boardDim = model.getPlaceBoard().DIM;
         changeTiles(boardDim, username, networkClient);
-        networkClient.stop();
+        networkClient.close();
     }
 
     /**

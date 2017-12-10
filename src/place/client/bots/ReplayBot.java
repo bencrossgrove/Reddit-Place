@@ -9,7 +9,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * reads a log file and repeats all tile changes
- * must be run on server with dimensions 10 x 10 and use replay.txt file in root directory
+ * must be run on server with dimensions 10 x 10 for optimal picture
+ * and use replay.txt file in root place directory "replay.txt" as 3rd argument
  *
  * @author Ben Crossgrove
  */
@@ -19,7 +20,7 @@ public class ReplayBot extends Bot {
     private File file;
     private FileInputStream fip;
 
-    public ReplayBot(String hostName, int portNumber, String filename){
+    public ReplayBot(String hostName, int portNumber, String filename) {
         super(hostName, portNumber, "replay-bot");
         this.file = new File(filename);
         Logger.log("using file " + file);
@@ -57,12 +58,23 @@ public class ReplayBot extends Bot {
         ) {
             while (true) {
                 PlaceRequest<?> request = (PlaceRequest<?>) oip.readObject();
-                networkClient.sendChangeTileReq((PlaceTile) request.getData());
-                Thread.sleep(500);
-                System.out.println(request.getData());
+                int maxIndex = networkClient.getModel().getPlaceBoard().DIM;
+                PlaceTile current = (PlaceTile) request.getData();
+                // only print if fits in current board dim
+                if (current.getCol() < maxIndex && current.getRow() < maxIndex) {
+                    networkClient.sendChangeTileReq(current);
+                    Thread.sleep(500);
+                } else {
+                    System.out.println("Tile out of range: " + current);
+                }
             }
         } catch (EOFException e) {
-            System.out.println("End of file reached");
+            Logger.debug("End of file reached");
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
         } catch (IOException | ClassNotFoundException | InterruptedException e) {
             e.printStackTrace();
         } finally {
