@@ -28,6 +28,7 @@ import java.util.*;
 
 /**
  * A JavaFx GUI version of Place
+ *
  * @author Ben Crossgrove
  * @author Mitch Leadley
  */
@@ -132,7 +133,7 @@ public class PlaceGUI extends Application implements Observer {
         HBox colorsPane = new HBox();
         HBox labelPane = new HBox();
         // will default to black
-        Label selectedColor = new Label("Current Color: " + PlaceColor.BLACK.name());
+        Label selectedColor = new Label("Selected Color: " + PlaceColor.BLACK.name());
         for (int i = 0; i < PlaceColor.TOTAL_COLORS; i++) {
             ToggleButton btn = new ToggleButton(Integer.toHexString(i));
             PlaceColor currentColor = PlaceColorUtil.getColor(i);
@@ -140,25 +141,27 @@ public class PlaceGUI extends Application implements Observer {
             btn.setStyle("-fx-background-color:" + currentColor.name());
             float[] hsbValue = PlaceColorUtil.getHSB(currentColor);
             float brightness = hsbValue[2];
-            if (brightness < 0.6) {
+            if (brightness < 0.6 || currentColor.name().equals("BLUE")) {
                 btn.setTextFill(Color.WHITE);
             }
             btn.setToggleGroup(colors);
-            // default to black
+            // default selected color to black
             if (i == 0) {
                 btn.setSelected(true);
             }
             btn.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    selectedColor.setText("Current Color: " + currentColor.name());
+                    selectedColor.setText("Selected Color: " + currentColor.name());
                 }
             });
             colorsPane.getChildren().addAll(btn);
         }
+
         labelPane.getChildren().add(selectedColor);
         colorsPane.setAlignment(Pos.CENTER);
         labelPane.setAlignment(Pos.CENTER);
+
         bottomPane.getChildren().addAll(colorsPane, labelPane);
         bottomPane.setAlignment(Pos.CENTER);
         return bottomPane;

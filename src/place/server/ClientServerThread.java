@@ -8,6 +8,7 @@ import place.network.PlaceRequest;
 
 import java.io.*;
 import java.net.SocketException;
+import java.util.ConcurrentModificationException;
 
 /**
  * Used to receive all CHANGE_TILE requests from Client to Server

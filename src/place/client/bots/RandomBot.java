@@ -37,24 +37,28 @@ public class RandomBot {
     }
 
     /**
-     * Where user input is accepted and sent as a new tile to the NetworkClient where the CHANGE_TILE request
-     * is then sent to the place.server
+     * bot main loop that places tiles of random color and coordinate on board
      */
     private static void changeTiles(int boardDim, String username, NetworkClient networkClient) {
         boolean done = false;
-        while (true) {
-            int row = ThreadLocalRandom.current().nextInt(0, boardDim);
-            int col = ThreadLocalRandom.current().nextInt(0, boardDim);
-            int colorCode = ThreadLocalRandom.current().nextInt(0, PlaceColor.TOTAL_COLORS);
-            PlaceColor color = PlaceColorUtil.getColor(colorCode);
-            PlaceTile selectedTile = new PlaceTile(row, col, username, color, System.currentTimeMillis());
-            networkClient.sendChangeTileReq(selectedTile);
-            Logger.log(selectedTile.toString());
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        try {
+            while (true) {
+                int row = ThreadLocalRandom.current().nextInt(0, boardDim);
+                int col = ThreadLocalRandom.current().nextInt(0, boardDim);
+                int colorCode = ThreadLocalRandom.current().nextInt(0, PlaceColor.TOTAL_COLORS);
+                PlaceColor color = PlaceColorUtil.getColor(colorCode);
+                PlaceTile selectedTile = new PlaceTile(row, col, username, color, System.currentTimeMillis());
+                networkClient.sendChangeTileReq(selectedTile);
+                Logger.debug(selectedTile.toString());
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+        } catch (Exception e) {
+            // properly terminate network client
+            networkClient.stop();
         }
     }
 }
