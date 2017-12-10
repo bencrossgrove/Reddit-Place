@@ -52,7 +52,7 @@ public class ColorCycleBot extends Bot {
                         PlaceTile selectedTile = new PlaceTile(row, col, username, color, System.currentTimeMillis());
                         networkClient.sendChangeTileReq(selectedTile);
                         try {
-                            Thread.sleep(200);
+                            Thread.sleep(750);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

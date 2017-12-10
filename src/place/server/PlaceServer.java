@@ -1,6 +1,7 @@
 package place.server;
 
 import place.Logger;
+import place.PlaceBoardCheckout;
 import place.PlaceBoardObservable;
 import place.network.PlaceExchange;
 import place.network.PlaceRequest;
@@ -39,6 +40,9 @@ public class PlaceServer {
         int boardDim = Integer.parseInt(args[1]);
         NetworkServer netServer = NetworkServer.getInstance();
         PlaceBoardObservable model = new PlaceBoardObservable(boardDim);
+        PlaceBoardCheckout boardCheckout = new PlaceBoardCheckout(model);
+        // so first user gets right in
+        boardCheckout.doNotify();
 
         try {
             ServerSocket serverSocket =
@@ -63,10 +67,19 @@ public class PlaceServer {
                             netServer.add(username, out);
                             // send login success
                             PlaceExchange.loginSuccess(out, "Login of \'" + username + "\' was successful");
-                            // send board
-                            PlaceExchange.board(out, model.getPlaceBoard());
+                            try {
+                                boardCheckout.doWait();
+                                // send board
+                                PlaceExchange.board(out, model.getPlaceBoard());
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                System.out.println("Thread.sleep() was interrupted");
+                                e.printStackTrace();
+                            } finally {
+                                boardCheckout.doNotify();
+                            }
                             // start thread
-                            new ClientServerThread(in, username, model).start();
+                            new ClientServerThread(in, username, model, boardCheckout).start();
                         }
                     }
                 }

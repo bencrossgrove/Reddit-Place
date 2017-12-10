@@ -6,7 +6,7 @@ public class PlaceBoardObservable extends Observable {
 
     PlaceBoard placeBoard;
 
-    public PlaceBoardObservable(PlaceBoard board){
+    public PlaceBoardObservable(PlaceBoard board) {
         Logger.debug("PlaceBoardObservable constructor board");
         this.placeBoard = board;
     }

@@ -1,6 +1,7 @@
 package place.server;
 
 import place.Logger;
+import place.PlaceBoardCheckout;
 import place.PlaceBoardObservable;
 import place.PlaceTile;
 import place.network.PlaceRequest;
@@ -9,7 +10,7 @@ import java.io.*;
 import java.net.SocketException;
 
 /**
- * Used to send all CHANGE_TILE requests from Client to Server
+ * Used to receive all CHANGE_TILE requests from Client to Server
  *
  * @author Ben Crossgrove
  */
@@ -19,12 +20,14 @@ public class ClientServerThread extends Thread {
     private ObjectInputStream in;
     private String clientName;
     private PlaceBoardObservable board;
+    private PlaceBoardCheckout boardCheckout;
 
-    public ClientServerThread(ObjectInputStream in, String clientName, PlaceBoardObservable board) {
+    public ClientServerThread(ObjectInputStream in, String clientName, PlaceBoardObservable board, PlaceBoardCheckout boardCheckout) {
         super("ClientServerThread");
         this.in = in;
         this.clientName = clientName;
         this.board = board;
+        this.boardCheckout = boardCheckout;
         Logger.debug("ClientServerThread being created");
     }
 
@@ -39,8 +42,16 @@ public class ClientServerThread extends Thread {
                 PlaceRequest.RequestType requestType = placeRequest.getType();
                 if (requestType == PlaceRequest.RequestType.CHANGE_TILE) {
                     PlaceTile tile = (PlaceTile) placeRequest.getData();
-                    NetworkServer.getInstance().update(tile);
-                    board.getPlaceBoard().setTile(tile);
+                    try {
+                        boardCheckout.doWait();
+                        NetworkServer.getInstance().update(tile);
+                        board.getPlaceBoard().setTile(tile);
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } finally {
+                        boardCheckout.doNotify();
+                    }
                 } else {
                     System.err.println("Unexpected request type {requestType}");
                     System.exit(1);
