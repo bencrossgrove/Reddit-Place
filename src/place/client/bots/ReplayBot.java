@@ -27,7 +27,7 @@ public class ReplayBot extends Bot {
         try {
             this.fip = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            System.out.println("Could not open FileInputStream");
+            System.out.println("Could not open FileInputStream, does src/place/replay.txt exist?");
             System.exit(0);
         }
     }
