@@ -26,7 +26,7 @@ public class NetworkServer {
 
     private NetworkServer() {
         super();
-        this.file = new File("tile-changes.txt");
+        this.file = new File("src/place/tile-changes.txt");
         try {
             this.oos = new ObjectOutputStream(new FileOutputStream(file));
         } catch (IOException e) {

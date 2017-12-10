@@ -1,4 +1,5 @@
 EXTRA CREDIT
+Ben Crossgrove, Mitch Leadley
 
 Bots
 
@@ -16,10 +17,10 @@ on the contents read.
 
     Usage: java ReplayBot <host name> <port number> <filename>
 
-    Note: intended for use with 10x10 board, "replay.txt" file must reside outside of src
-    directory in main Place folder
+    Note: intended for use with 10x10 board, must use file path "src/place/replay.txt" as 3rd arg
+    for filename
 
 Other
 
-During tile changes, all changes are logged in a file "tile-changes.txt" which can then be
+During tile changes, all changes are logged in a file "src/place/tile-changes.txt" which can then be
 renamed "replay.txt" and used with ReplayBot
