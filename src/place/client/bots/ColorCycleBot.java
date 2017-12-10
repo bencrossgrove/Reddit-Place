@@ -40,34 +40,29 @@ public class ColorCycleBot extends Bot {
      * is then sent to the place.server
      */
     private static void changeTiles(int boardDim, String username, NetworkClient networkClient) {
-        boolean done = false;
         int x = 0;
         int y = (boardDim - 1);
         int col = x;
         int switchInt = 1;
-        boolean loop = true;
         while (true) {
             for (int c = 0; c < PlaceColor.TOTAL_COLORS; c++) {
                 for (int row = 0; row < boardDim; row++) {
-                    while (loop) {
+                    while (true) {
                         PlaceColor color = PlaceColorUtil.getColor(c);
                         PlaceTile selectedTile = new PlaceTile(row, col, username, color, System.currentTimeMillis());
                         networkClient.sendChangeTileReq(selectedTile);
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(200);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         col += switchInt;
                         if (col == boardDim || col == -1) {
+                            switchInt *= -1;
+                            col += switchInt;
                             break;
                         }
                     }
-                    x = x ^ y;
-                    y = x ^ y;
-                    x = x ^ y;
-                    switchInt *= -1;
-                    col = x;
                 }
             }
         }

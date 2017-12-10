@@ -38,7 +38,7 @@ public class NetworkServer {
         users.put(username, stream);
     }
 
-    private void remove(String username) {
+    public void remove(String username) {
         users.remove(username);
     }
 

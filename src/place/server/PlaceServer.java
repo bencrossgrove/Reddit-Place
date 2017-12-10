@@ -79,4 +79,9 @@ public class PlaceServer {
         }
 
     }
+
+    public static synchronized void remove(String username) {
+        users.remove(username);
+    }
+
 }

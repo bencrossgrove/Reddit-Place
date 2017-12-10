@@ -105,7 +105,7 @@ public class PlaceGUI extends Application implements Observer {
         primaryStage.show();
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
-                System.out.println("Stage is closing");
+                System.out.println(username + " is exiting");
                 primaryStage.close();
                 networkClient.stop();
                 System.exit(0);

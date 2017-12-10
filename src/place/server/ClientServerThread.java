@@ -10,10 +10,12 @@ import java.net.SocketException;
 
 /**
  * Used to send all CHANGE_TILE requests from Client to Server
+ *
  * @author Ben Crossgrove
  */
 
 public class ClientServerThread extends Thread {
+
     private ObjectInputStream in;
     private String clientName;
     private PlaceBoardObservable board;
@@ -45,6 +47,8 @@ public class ClientServerThread extends Thread {
                 }
             }
         } catch (SocketException se) {
+            PlaceServer.remove(clientName);
+            NetworkServer.getInstance().remove(clientName);
             System.out.println(clientName + " has exited");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

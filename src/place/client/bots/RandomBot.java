@@ -51,7 +51,7 @@ public class RandomBot {
             networkClient.sendChangeTileReq(selectedTile);
             Logger.log(selectedTile.toString());
             try {
-                Thread.sleep(300);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

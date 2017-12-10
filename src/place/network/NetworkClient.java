@@ -136,11 +136,12 @@ public class NetworkClient {
                 PlaceRequest.RequestType requestType = request.getType();
                 if (requestType == PlaceRequest.RequestType.TILE_CHANGED) {
                     this.model.setTile((PlaceTile) request.getData());
+                    Thread.sleep(500); /*wait to prevent sending another tile in rapid fashion*/
                 } else {
                     System.err.println("Bad request: " + requestType);
                     this.stop();
                 }
-            } catch (ClassNotFoundException | IOException e) {
+            } catch (ClassNotFoundException | IOException | InterruptedException e) {
                 e.printStackTrace();
                 this.stop();
             }
