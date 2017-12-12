@@ -1,6 +1,3 @@
-EXTRA CREDIT
-Ben Crossgrove, Mitch Leadley
-
 Bots
 
 RandomBot - changes a tile at a random position within the board, with a random color.
@@ -20,7 +17,6 @@ on the contents read.
     Note: intended for use with 10x10 board, must use file path "src/place/replay.txt" as 3rd arg
     for filename
 
-Other
 
 During tile changes, all changes are logged in a file "src/place/tile-changes.txt" which can then be
 renamed "replay.txt" and used with ReplayBot

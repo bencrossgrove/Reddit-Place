@@ -30,7 +30,6 @@ import java.util.*;
  * A JavaFx GUI version of Place
  *
  * @author Ben Crossgrove
- * @author Mitch Leadley
  */
 
 public class PlaceGUI extends Application implements Observer {
